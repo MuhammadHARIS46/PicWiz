@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import MediaUploader from "./MediaUploader";
 export const formSchema = z.object({
   title: z.string(),
   aspectRatio: z.string().optional(),
@@ -89,9 +90,9 @@ const TransformationForm = ({
       width: imageSize.width,
       height: imageSize.height,
     }));
-    setNewTransformation(transformationType.config)
+    setNewTransformation(transformationType.config);
 
-    return onChangeField(value)
+    return onChangeField(value);
   };
 
   const onInputChangeHandler = (
@@ -100,26 +101,26 @@ const TransformationForm = ({
     type: string,
     onChangeField: (value: string) => void
   ) => {
-    debounce(()=>{
-      setNewTransformation((prevState:any)=>({
+    debounce(() => {
+      setNewTransformation((prevState: any) => ({
         ...prevState,
-        [type]:{
+        [type]: {
           ...prevState?.[type],
-          [fieldName === "prompt"?"prompt":"to"] : value
-        }
-      }))
-    },1000)
+          [fieldName === "prompt" ? "prompt" : "to"]: value,
+        },
+      }));
+    }, 1000);
   };
 
   const onTransformHandler = () => {
-    setIsTransforming(true)
+    setIsTransforming(true);
     setTransformationConfig(
       deepMergeObjects(newTransformation, transformationConfig)
-    )
-    setNewTransformation(null)
+    );
+    setNewTransformation(null);
     startTransition(async () => {
       // await updateCredits(userId, creditFee)
-    })
+    });
   };
 
   return (
@@ -209,6 +210,22 @@ const TransformationForm = ({
             )}
           </div>
         )}
+        <div className="media-uploader-field">
+          <CustomField
+            control={form.control}
+            name="publicId"
+            className="flex size-full flex-col"
+            render={({ field }) => (
+              <MediaUploader
+                onValueChange={field.onChange}
+                setImage={setImage}
+                publicId={field.value}
+                image={image}
+                type={type}
+              />
+            )}
+          />
+        </div>
         <div className="flex flex-col gap-4">
           <Button
             type="button"
